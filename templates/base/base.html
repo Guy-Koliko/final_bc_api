@@ -1,0 +1,97 @@
+{% load static %}
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="{%static '/css/bootstrap.min.css'%}" type="text/css">
+    <title>ECAD-VOTE SPACE</title>
+  </head>
+  <body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary text-white">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{%url 'index'%}">ECAD-VOTE</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <!-- this checks if user is logged in -->
+        {% if user.is_authenticated %}
+
+          <!-- this check if the login user is an EC higher officer -->
+          {% if user.username == "robin"%}
+              {% comment %} this is the part for only login EC official {% endcomment %}
+              <li class="nav-item">
+              <a class="nav-link active" href="{% url 'official' %}">Officials Info</a>
+            </li>
+
+            {% comment %} this is the part to fully confirm the votes by an EC official {% endcomment %}
+              <li class="nav-item">
+              <a class="nav-link active" href="{% url 'final' %}">Final Confirmation</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="{% url 'logout' %}">Logout</a>
+            </li>
+
+           <!-- this check if the PO(polling station officer) has logged in  -->
+          {%else%}
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="{% url 'logout' %}">Logout</a>
+              </li>
+          {%endif%}
+
+
+          <!-- this part will be available to the general public  -->
+        {%else%}
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Region</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="{% url 'const' %}">Constituency</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="{% url 'poll' %}">Polling Station</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="{% url 'party' %}">Political Parties</a>
+            </li>
+            <form class="d-flex ml-auto">
+              <input class="form-control me-6 mr-auto"  type="search" placeholder="Search" aria-label="Search">
+              <button class="btn .bg-dark" type="submit">Search</button>
+            </form>
+        {% endif%}
+ 
+
+      </ul>
+      
+    </div>
+  </div>
+</nav>
+<br>
+<div class="container">
+  <!-- this part provides messages  -->
+  {% if messages %} 
+      {% for message in messages%}
+      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <button class="close" data-bs-dismiss="alert" aria-label="Close"><sup>x</sup></button>
+        {{message}}
+      </div>
+</div>
+      {% endfor%}
+
+  {% endif%}
+<div class="mb-4">
+
+</div>
+{% block content %}
+      {% endblock %}
+    <script src="{%static '/js/bootstrap.min.js'%}"></script>
+
+      
+  </body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <title>ECAD-VOTE</title>
+  </head>
+  <body>
+
+<!-- As a heading -->
+<nav class="navbar navbar-se btn-primary">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1">ECAD-VOTE</span>
+  </div>
+</nav>
+   
+    <div class="container col-6 col-md-6 offset-md-3">
+      <h1>ECAD-VOTE</h1>
+      <form method="POST" action="http://127.0.0.1:9000/submit">
+      <form>
+        <div class="form-group">
+          <div class="form-group">
+
+            <input type="text" name="region" id="region" class="form-control" placeholder="Region Name">
+          </div>
+          <div class="form-group">
+
+            <input type="text" name="constituency" id="constituency" class="form-control" placeholder="Constituency Name">
+          </div>  
+         <div class="form-group">
+
+          <input type="text" name="author" id="author" class="form-control" placeholder="Polling Name">
+        </div>  
+          <input type="text" name='party' id="party" class="form-control"  placeholder="Party Name">
+          
+        </div>
+        <div class="form-group">
+
+          <input type="text" name="vote_in_number" id="vote_in_number" class="form-control" placeholder="Vote in figure">
+        </div>
+         <div class="form-group">
+
+          <input type="text" name="vote_in_words" id="vote_in_words" class="form-control" placeholder="Vote in Words">
+        </div>
+        <div class="form-group">
+
+          <input type="text" name="rejected_ballot" id="rejected_ballot" class="form-control" placeholder="Rejected Ballot">
+        </div>
+
+       <div>
+        <button type="submit" class="btn btn-primary" id="saveButton">Submit</button>
+       </div>
+        
+      
+      </form>
+      
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    
+  
+  </body>
+</html>
