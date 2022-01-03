@@ -1,13 +1,26 @@
 from logging import exception
 from block_chain_lab import Block,BlockChain
-from flask import Flask,request
+from flask import Flask,request,render_template,redirect,session 
 import json
 import requests
 import time
+from flask_cors import CORS,cross_origin
+
+# set a common port for post request coming form other submissin pages 
+port = 5000
 
 #this part initialize flask application
 
 app = Flask(__name__)
+# CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+# app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy   dog'
+app.config['CORS_HEADERS'] = 'Content-Type'
+
+# cors = CORS(app, resources={r"/submit": {"origins": "http://localhost:8000"}})
+
+# app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 #this part initialize a blockchian object
 blockchian = BlockChain()
@@ -15,6 +28,7 @@ blockchian = BlockChain()
 
 #this part declars flask endpoint
 @app.route('/new_transaction',methods=['POST'])
+@cross_origin()
 def new_transaction():
     tx_data = request.get_json()
     required_field = tx_data
@@ -31,6 +45,7 @@ def new_transaction():
 
 #this part is to get the chain of data
 @app.route('/chain',methods=['GET'])
+@cross_origin()
 def get_chain():
     chain_data = []
     for block in blockchian.chain:
@@ -39,6 +54,7 @@ def get_chain():
 
 #this part is an endpoint to mine transaction
 @app.route('/mine',methods=['GET'])
+@cross_origin()
 def mine_unconfirmed_transaction():
     result = blockchian.mine()
     if not result:
@@ -65,6 +81,7 @@ peers = set()
 
 #This is an endpoint that helps to add new peers to the network
 @app.route('/register_node',methods=['POST'])
+@cross_origin()
 def register_new_peers():
     node_address = request.get_json()['node_address']
     if not node_address:
@@ -78,6 +95,7 @@ def register_new_peers():
 
 #this part allows peers to register with new nodes
 @app.route('/register_with',methods=['POST'])
+@cross_origin()
 def register_with_existing_node():
     node_address = request.get_json()['node_address']
     
@@ -141,6 +159,7 @@ def consensus():
 
 #this part provides an endpoint to add mined block to the list of chains
 @app.route('/add_block',methods=['POST'])
+@cross_origin()
 def verify_and_add_block():
     block_data = request.get_json()
     block = Block(block_data['index'],block_data['transactions'],block_data['timestamp'],block_data['previous_hash'])
@@ -158,3 +177,66 @@ def announce_new_block(block):
     for peer in peers:
         url = "{}add_block".format(peer)
         requests.post(url, data=json.dumps(block.__dict__, sort_keys=True))
+
+# #####################################################################################
+# add other routes and code from web_app.py here 
+
+
+CONNECTED_NODE_ADDRESS = "http://127.0.0.1:{}".format(port)
+
+posts = []
+
+#this function gets the data from the node’s /chain endpoint, parses the data, and stores it locally.
+
+def fetch_posts():
+    
+    get_chain_address = "{}/chain".format(CONNECTED_NODE_ADDRESS)
+    respons = requests.get(get_chain_address)
+    if respons.status_code == 200:
+        content = []
+        chain = json.loads(respons.content)
+        for block in chain['chain']:
+            for tx in block['transactions']:
+                tx['index'] = block['index']
+                tx['hash']=block['previous_hash']
+                content.append(tx)
+
+@app.route('/submit',methods=['POST'])
+@cross_origin()
+def submit_textarea():
+    region = request.form["region"]
+    constituency = request.form["constituency"]
+    author = request.form["author"]
+    # post_content1 = request.form.get("NPP ","NPP")
+    # post_content = request.form.get("NDC ","NDC")
+    # username = request.form.get("username","username")
+    party1 = request.form["NDC "]
+    party2 = request.form["NPP "]
+    party1vote= request.form["NDC vote_in_number"]
+    party2vote= request.form["NPP vote_in_number"]
+  
+    # post_content = request.form["party_name"]
+    # vote_number= request.form['vote_in_number']
+    # taken out of request form
+    # vote_words= request.form['vote_in_words']
+    rejected_ballot= request.form['rejected_ballot']
+    post_object = {region:{constituency:{author:{party1:party1vote,party2:party2vote,'rejected_ballot':rejected_ballot}}}}
+    # post_object = {'author': author,'party':post_content,'vote_in_number':vote_number,'vote_in_words':vote_words,'rejected_ballot':rejected_ballot,'region':region,"constituency":constituency}
+    new_tx_address = "{}/new_transaction".format(CONNECTED_NODE_ADDRESS)
+    print(new_tx_address)
+    requests.post(new_tx_address,json=post_object,headers={'Content-type': 'application/json'})
+    
+    # pass the region,constituency,polling station in messages in messages stored in sessions  
+    url = ('http://127.0.0.1:8000/polling_station/?region={}&constituency={}&ps={}&party1={}&party2={}&r={}').format(region,constituency,author,party1,party2,rejected_ballot) 
+
+    # upon submission b ec offical redirect to polling station results page 
+    return redirect(url)
+    
+
+@app.route('/')
+def home():
+    return render_template('/index.html')
+
+# set a port here to be used by the submission page 
+# if __name__ == '__main__':
+#     app.run( host='127.0.0.1',port=9000)
