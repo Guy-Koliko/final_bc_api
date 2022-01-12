@@ -13,14 +13,7 @@ port = 5000
 
 app = Flask(__name__)
 # CORS(app)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
-
-# app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy   dog'
-app.config['CORS_HEADERS'] = 'Content-Type'
-
-# cors = CORS(app, resources={r"/submit": {"origins": "http://localhost:8000"}})
-
-# app.config["TEMPLATES_AUTO_RELOAD"] = True
+CORS(app, resources={r"/new_transaction/*": {"origins": "*"}})
 
 #this part initialize a blockchian object
 blockchian = BlockChain()
@@ -28,10 +21,13 @@ blockchian = BlockChain()
 
 #this part declars flask endpoint
 @app.route('/new_transaction',methods=['POST'])
-@cross_origin()
+# @cross_origin()
 def new_transaction():
     tx_data = request.get_json()
     required_field = tx_data
+    # print(required_field)
+    tx_data1 = json.dumps(tx_data)
+    tx_data = json.loads(tx_data1)
    
     for field in required_field:
         if not tx_data.get(field):
@@ -40,8 +36,15 @@ def new_transaction():
     tx_data["timestamp"] = time.time()
     
     blockchian.add_new_transaction(tx_data)
-    
+
+    # mine the block
+    requests.get("http://127.0.0.1:5000/mine")
+
+    # return success
     return "Success", 201
+
+    # print(required_field)
+    # return required_field
 
 #this part is to get the chain of data
 @app.route('/chain',methods=['GET'])
@@ -230,7 +233,7 @@ def submit_textarea():
     url = ('http://127.0.0.1:8000/polling_station/?region={}&constituency={}&ps={}&party1={}&party2={}&r={}').format(region,constituency,author,party1,party2,rejected_ballot) 
 
     # upon submission b ec offical redirect to polling station results page 
-    return redirect(url)
+    return post_object
     
 
 @app.route('/')
