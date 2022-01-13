@@ -204,36 +204,36 @@ def fetch_posts():
                 tx['hash']=block['previous_hash']
                 content.append(tx)
 
-@app.route('/submit',methods=['POST'])
-@cross_origin()
-def submit_textarea():
-    region = request.form["region"]
-    constituency = request.form["constituency"]
-    author = request.form["author"]
-    # post_content1 = request.form.get("NPP ","NPP")
-    # post_content = request.form.get("NDC ","NDC")
-    # username = request.form.get("username","username")
-    party1 = request.form["NDC "]
-    party2 = request.form["NPP "]
-    party1vote= request.form["NDC vote_in_number"]
-    party2vote= request.form["NPP vote_in_number"]
+# @app.route('/submit',methods=['POST'])
+# @cross_origin()
+# def submit_textarea():
+#     region = request.form["region"]
+#     constituency = request.form["constituency"]
+#     author = request.form["author"]
+#     # post_content1 = request.form.get("NPP ","NPP")
+#     # post_content = request.form.get("NDC ","NDC")
+#     # username = request.form.get("username","username")
+#     party1 = request.form["NDC "]
+#     party2 = request.form["NPP "]
+#     party1vote= request.form["NDC vote_in_number"]
+#     party2vote= request.form["NPP vote_in_number"]
   
-    # post_content = request.form["party_name"]
-    # vote_number= request.form['vote_in_number']
-    # taken out of request form
-    # vote_words= request.form['vote_in_words']
-    rejected_ballot= request.form['rejected_ballot']
-    post_object = {region:{constituency:{author:{party1:party1vote,party2:party2vote,'rejected_ballot':rejected_ballot}}}}
-    # post_object = {'author': author,'party':post_content,'vote_in_number':vote_number,'vote_in_words':vote_words,'rejected_ballot':rejected_ballot,'region':region,"constituency":constituency}
-    new_tx_address = "{}/new_transaction".format(CONNECTED_NODE_ADDRESS)
-    print(new_tx_address)
-    requests.post(new_tx_address,json=post_object,headers={'Content-type': 'application/json'})
+#     # post_content = request.form["party_name"]
+#     # vote_number= request.form['vote_in_number']
+#     # taken out of request form
+#     # vote_words= request.form['vote_in_words']
+#     rejected_ballot= request.form['rejected_ballot']
+#     post_object = {region:{constituency:{author:{party1:party1vote,party2:party2vote,'rejected_ballot':rejected_ballot}}}}
+#     # post_object = {'author': author,'party':post_content,'vote_in_number':vote_number,'vote_in_words':vote_words,'rejected_ballot':rejected_ballot,'region':region,"constituency":constituency}
+#     new_tx_address = "{}/new_transaction".format(CONNECTED_NODE_ADDRESS)
+#     print(new_tx_address)
+#     requests.post(new_tx_address,json=post_object,headers={'Content-type': 'application/json'})
     
-    # pass the region,constituency,polling station in messages in messages stored in sessions  
-    url = ('http://127.0.0.1:8000/polling_station/?region={}&constituency={}&ps={}&party1={}&party2={}&r={}').format(region,constituency,author,party1,party2,rejected_ballot) 
+#     # pass the region,constituency,polling station in messages in messages stored in sessions  
+#     url = ('http://127.0.0.1:8000/polling_station/?region={}&constituency={}&ps={}&party1={}&party2={}&r={}').format(region,constituency,author,party1,party2,rejected_ballot) 
 
-    # upon submission b ec offical redirect to polling station results page 
-    return post_object
+#     # upon submission b ec offical redirect to polling station results page 
+#     return post_object
     
 
 @app.route('/')
